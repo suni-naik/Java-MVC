@@ -11,4 +11,9 @@ public class HomeController {
     public String messageViewer() {
         return "Hello EveryOne!";
     }
+    
+     @GetMapping("/niveus")
+    public String messageForNiveusViewer() {
+        return "Hello Niveus! Greetings of the day!!!";
+    }
 }

@@ -1,10 +1,9 @@
 package com.niveus.controller;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,57 +14,47 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.niveus.DTO.StudentsDto;
+import com.niveus.bm.StudentBusinessManager;
 import com.niveus.model.Students;
-import com.niveus.service.Studentservice;
 
 @RestController
 public class StudentController {
-
-
+ 
     @Autowired
-    private Studentservice studentService;
+    StudentBusinessManager studentBusinessManager;	
 
     @PostMapping("/createStudent")
     public ResponseEntity<Students> createUser(@RequestBody StudentsDto student) {
-    	Students s= new Students();
-    	s.setName(student.getName());
-    	s.setAge(student.getAge());
-        Students savedUser = studentService.createStudent(s);
-        return ResponseEntity.ok(savedUser);
+        Students createdStudent = studentBusinessManager.createUser(student);
+        if (createdStudent != null) {
+            return new ResponseEntity<>(createdStudent, HttpStatus.CREATED);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/getAllStudents")
     public ResponseEntity<List<StudentsDto>> getAllStudents() {
-        List<Students> studentsList = studentService.getAllStudents();
-        List<StudentsDto> studentsDtoList = studentsList.stream()
-                .map(student -> new StudentsDto(student.getName(), student.getAge()))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(studentsDtoList);
+    	 List<StudentsDto> allStudents =  studentBusinessManager.getAllStudents();
+         return ResponseEntity.ok(allStudents);
     }
 
     
     @PutMapping("/updateStudent/{id}")
     public ResponseEntity<StudentsDto> updateStudent(@PathVariable Integer id, @RequestBody StudentsDto updatedStudent) {
-        Optional<Students> optionalStudent = studentService.getStudentById(id);
-        
-        if (optionalStudent.isPresent()) {
-            Students student = optionalStudent.get();
-            student.setName(updatedStudent.getName());
-            student.setAge(updatedStudent.getAge());
-            Students savedStudent = studentService.updateStudent(student);
-            return ResponseEntity.ok(new StudentsDto(savedStudent.getName(), savedStudent.getAge()));
+        StudentsDto updated = studentBusinessManager.updateStudent(id, updatedStudent);
+        if (updated != null) {
+            return ResponseEntity.ok(updated);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
     
-    
     @DeleteMapping("/deleteStudent/{id}")
     public ResponseEntity<Void> deleteStudent(@PathVariable Integer id) {
-        Optional<Students> optionalStudent = studentService.getStudentById(id);
+        boolean deleted = studentBusinessManager.deleteStudent(id);
         
-        if (optionalStudent.isPresent()) {
-            studentService.deleteStudent(id);
+        if (deleted) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();

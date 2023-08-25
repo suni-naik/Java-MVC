@@ -26,6 +26,17 @@ public class Students {
 	@Column
 	private Integer age;
 
+	public Students(Integer id, String name, Integer age) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.age = age;
+	}
+
+	public Students() {
+		
+	}
+
 	public Integer getId() {
 		return id;
 	}

@@ -1,4 +1,4 @@
-package com.niveus.DTO;
+package com.niveus.dto;
 
 import lombok.Data;
 

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.niveus.DTO.StudentsDto;
 import com.niveus.bm.StudentBusinessManager;
+import com.niveus.dto.StudentsDto;
 import com.niveus.model.Students;
 
 @RestController
